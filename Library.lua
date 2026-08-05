@@ -6354,7 +6354,6 @@ function Library:CreateWindow(WindowInfo)
 
     local IsCompact = false
     local LastExpandedWidth = 200
-    local Backdrop = nil
 
     do
         Library.KeybindFrame, Library.KeybindContainer = Library:AddDraggableMenu("Keybinds")
@@ -6365,18 +6364,8 @@ function Library:CreateWindow(WindowInfo)
         --// Verdant window palette
         local VER_BG  = Color3.fromRGB(12, 13, 15)
         local VER_TOP = Color3.fromRGB(16, 18, 20)
-        local VER_STRIP = Color3.fromRGB(14, 16, 18)
         local VER_ACC = Color3.fromRGB(34, 197, 94)
         local VER_OUT = Color3.fromRGB(42, 46, 51)
-
-        -- Dimmed screen backdrop
-        Backdrop = New("Frame", {
-            BackgroundColor3 = Color3.fromRGB(5, 6, 7),
-            BackgroundTransparency = 1,
-            Size = UDim2.fromScale(1, 1),
-            Visible = false,
-            Parent = ScreenGui,
-        })
 
         MainFrame = New("TextButton", {
             BackgroundColor3 = VER_BG,
@@ -6392,29 +6381,27 @@ function Library:CreateWindow(WindowInfo)
             Parent = MainFrame,
         })
         table.insert(Library.Scales, New("UIScale", { Parent = MainFrame }))
-        -- Layered green outer glow
-        local GlowFrame = New("Frame", {
-            BackgroundColor3 = Color3.new(0, 0, 0),
-            BackgroundTransparency = 1,
-            Size = UDim2.fromScale(1, 1),
-            Parent = MainFrame,
-        })
-        New("UICorner", {
-            CornerRadius = UDim.new(0, WindowInfo.CornerRadius),
-            Parent = GlowFrame,
-        })
-        for _, Layer in {
-            { 26, 0.95 },
-            { 15, 0.9 },
-            { 8, 0.78 },
-            { 2, 0.5 },
-        } do
+        -- Layered green outer glow (stepped falloff bands)
+        for Band = 1, 12 do
+            local Margin = Band * 2
+            local Layer = New("Frame", {
+                AnchorPoint = Vector2.new(0.5, 0.5),
+                BackgroundColor3 = Color3.new(0, 0, 0),
+                BackgroundTransparency = 1,
+                Position = UDim2.fromScale(0.5, 0.5),
+                Size = UDim2.new(1, Margin * 2, 1, Margin * 2),
+                Parent = MainFrame,
+            })
+            New("UICorner", {
+                CornerRadius = UDim.new(0, WindowInfo.CornerRadius + Margin),
+                Parent = Layer,
+            })
             New("UIStroke", {
                 ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
                 Color = VER_ACC,
-                Thickness = Layer[1],
-                Transparency = Layer[2],
-                Parent = GlowFrame,
+                Thickness = 2,
+                Transparency = 0.62 + (Band - 1) * 0.026,
+                Parent = Layer,
             })
         end
         -- Crisp hairline border
@@ -6700,7 +6687,7 @@ function Library:CreateWindow(WindowInfo)
         --// TAB STRIP (top nav, replaces sidebar)
         Tabs = New("ScrollingFrame", {
             AutomaticCanvasSize = Enum.AutomaticSize.X,
-            BackgroundColor3 = VER_STRIP,
+            BackgroundColor3 = VER_TOP,
             CanvasSize = UDim2.fromScale(0, 0),
             Position = UDim2.fromOffset(0, 52),
             ScrollBarThickness = 0,
@@ -6719,24 +6706,16 @@ function Library:CreateWindow(WindowInfo)
             PaddingLeft = UDim.new(0, 10), PaddingRight = UDim.new(0, 10),
             Parent = Tabs,
         })
-        -- Divider under the strip
-        New("Frame", {
-            BackgroundColor3 = VER_OUT,
-            Position = UDim2.fromOffset(0, 98),
-            Size = UDim2.new(1, 0, 0, 1),
-            ZIndex = 2,
-            Parent = MainFrame,
-        })
 
         --// CONTENT CONTAINER (full width)
         Container = New("Frame", {
-            BackgroundColor3 = VER_BG,
+            BackgroundColor3 = VER_TOP,
             Name = "Container",
             Position = UDim2.fromOffset(0, 98),
             Size = UDim2.new(1, 0, 1, -122),
             Parent = MainFrame,
         })
-        Library:AddToRegistry(Container, { BackgroundColor3 = "BackgroundColor" })
+        Library:AddToRegistry(Container, { BackgroundColor3 = "MainColor" })
         New("UIPadding", {
             PaddingBottom = UDim.new(0, 0), PaddingLeft = UDim.new(0, 6),
             PaddingRight = UDim.new(0, 6), PaddingTop = UDim.new(0, 0),
@@ -6833,16 +6812,18 @@ function Library:CreateWindow(WindowInfo)
         local TabRight
 
         Icon = Library:GetCustomIcon(Icon)
+        local LabelWidth = Library:GetTextBounds(Name, Library.Scheme.Font, 13, 1000)
+        local PillWidth = LabelWidth + 28 + (Icon and 28 or 0)
         local TabPill = nil
         local TabAccentBar = nil
         local TabGlow = nil
         do
             -- Verdant pill nav button (top strip)
             TabButton = New("TextButton", {
-                AutomaticSize = Enum.AutomaticSize.X,
+                AutoButtonColor = false,
                 BackgroundColor3 = Library.Scheme.AccentColor,
                 BackgroundTransparency = 1,
-                Size = UDim2.fromOffset(0, 34),
+                Size = UDim2.fromOffset(PillWidth, 34),
                 Text = "",
                 ClipsDescendants = true,
                 Parent = Tabs,
@@ -6885,10 +6866,9 @@ function Library:CreateWindow(WindowInfo)
 
             local ButtonContent = New("Frame", {
                 AnchorPoint = Vector2.new(0.5, 0.5),
-                AutomaticSize = Enum.AutomaticSize.X,
                 BackgroundTransparency = 1,
                 Position = UDim2.fromScale(0.5, 0.5),
-                Size = UDim2.fromOffset(0, 20),
+                Size = UDim2.fromOffset(LabelWidth + (Icon and 28 or 0), 20),
                 ZIndex = 1,
                 Parent = TabButton,
             })
@@ -6908,8 +6888,7 @@ function Library:CreateWindow(WindowInfo)
                     ImageRectSize = Icon.ImageRectSize,
                     ImageTransparency = 0.5,
                     ScaleType = Enum.ScaleType.Fit,
-                    Size = UDim2.fromScale(1, 1),
-                    SizeConstraint = Enum.SizeConstraint.RelativeYY,
+                    Size = UDim2.fromOffset(20, 20),
                     ZIndex = 1,
                     Parent = ButtonContent,
                 })
@@ -7400,6 +7379,7 @@ function Library:CreateWindow(WindowInfo)
                 local BoxIcon = Library:GetCustomIcon(IconName)
 
                 local Button = New("TextButton", {
+                    AutoButtonColor = false,
                     AutomaticSize = Enum.AutomaticSize.X,
                     BackgroundColor3 = "MainColor",
                     BackgroundTransparency = 1,
@@ -7684,14 +7664,16 @@ function Library:CreateWindow(WindowInfo)
         local TabContainer
 
         Icon = if Icon == "key" then KeyIcon else Library:GetCustomIcon(Icon)
+        local LabelWidth = Library:GetTextBounds(Name, Library.Scheme.Font, 13, 1000)
+        local PillWidth = LabelWidth + 28 + (Icon and 28 or 0)
         local KeyTabGlow = nil
         local KeyTabPill = nil
         do
             TabButton = New("TextButton", {
-                AutomaticSize = Enum.AutomaticSize.X,
+                AutoButtonColor = false,
                 BackgroundColor3 = Library.Scheme.AccentColor,
                 BackgroundTransparency = 1,
-                Size = UDim2.fromOffset(0, 34),
+                Size = UDim2.fromOffset(PillWidth, 34),
                 Text = "",
                 ClipsDescendants = true,
                 Parent = Tabs,
@@ -7731,10 +7713,9 @@ function Library:CreateWindow(WindowInfo)
 
             local ButtonContent = New("Frame", {
                 AnchorPoint = Vector2.new(0.5, 0.5),
-                AutomaticSize = Enum.AutomaticSize.X,
                 BackgroundTransparency = 1,
                 Position = UDim2.fromScale(0.5, 0.5),
-                Size = UDim2.fromOffset(0, 20),
+                Size = UDim2.fromOffset(LabelWidth + (Icon and 28 or 0), 20),
                 ZIndex = 1,
                 Parent = TabButton,
             })
@@ -7765,8 +7746,7 @@ function Library:CreateWindow(WindowInfo)
                     ImageRectSize = Icon.ImageRectSize,
                     ImageTransparency = 0.5,
                     ScaleType = Enum.ScaleType.Fit,
-                    Size = UDim2.fromScale(1, 1),
-                    SizeConstraint = Enum.SizeConstraint.RelativeYY,
+                    Size = UDim2.fromOffset(20, 20),
                     Parent = ButtonContent,
                 })
             end
@@ -8454,13 +8434,6 @@ function Library:CreateWindow(WindowInfo)
         end
 
         MainFrame.Visible = Library.Toggled
-
-        if Backdrop then
-            Backdrop.Visible = Library.Toggled
-            TweenService:Create(Backdrop, Library.TweenInfo, {
-                BackgroundTransparency = Library.Toggled and 0.45 or 1,
-            }):Play()
-        end
 
         if WindowInfo.UnlockMouseWhileOpen then
             ModalElement.Modal = Library.Toggled
