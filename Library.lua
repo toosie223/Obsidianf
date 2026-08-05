@@ -1,4 +1,4 @@
-﻿local cloneref = (cloneref or clonereference or function(instance: any)
+local cloneref = (cloneref or clonereference or function(instance: any)
     return instance
 end)
 local CoreGui: CoreGui = cloneref(game:GetService("CoreGui"))
