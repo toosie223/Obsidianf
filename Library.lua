@@ -1,4 +1,4 @@
-local cloneref = (cloneref or clonereference or function(instance: any)
+﻿local cloneref = (cloneref or clonereference or function(instance: any)
     return instance
 end)
 local CoreGui: CoreGui = cloneref(game:GetService("CoreGui"))
@@ -200,11 +200,11 @@ local Library = {
     IsLightTheme = false,
     Scheme = {
     -- Verdant: neutral dark panels, single green accent, green outer glow
-    BackgroundColor = Color3.fromRGB(12, 13, 15),
-    MainColor = Color3.fromRGB(18, 20, 23),
+    BackgroundColor = Color3.fromRGB(23, 25, 28),
+    MainColor = Color3.fromRGB(28, 31, 35),
     AccentColor = Color3.fromRGB(34, 197, 94),
     AccentColor2 = Color3.fromRGB(74, 222, 128),
-    OutlineColor = Color3.fromRGB(42, 46, 51),
+    OutlineColor = Color3.fromRGB(58, 63, 69),
     FontColor = Color3.fromRGB(232, 236, 233),
     Font = Font.fromEnum(Enum.Font.GothamBold),
 
@@ -212,11 +212,11 @@ local Library = {
     DarkColor = Color3.fromRGB(0, 0, 0),
     WhiteColor = Color3.fromRGB(255, 255, 255),
 
-    SidebarColor = Color3.fromRGB(14, 15, 17),
+    SidebarColor = Color3.fromRGB(25, 27, 30),
     AccentGlow = Color3.fromRGB(34, 197, 94),
     GlowColor = Color3.fromRGB(34, 197, 94),
     TextMuted = Color3.fromRGB(146, 152, 148),
-    SurfaceLight = Color3.fromRGB(26, 29, 33),
+    SurfaceLight = Color3.fromRGB(34, 38, 43),
 },
 
     Registry = {},
@@ -306,6 +306,11 @@ local Templates = {
         ToggleKeybind = Enum.KeyCode.RightControl,
         MobileButtonsSide = "Left",
         UnlockMouseWhileOpen = true,
+
+        --// Glow \\--
+        Glow = true,
+        GlowSize = 10,
+        GlowOpacity = 1,
 
         EnableSidebarResize = false,
         EnableCompacting = true,
@@ -1529,8 +1534,8 @@ function Library:AddDraggableLabel(Text: string)
     })
     New("UIGradient", {
         Color = ColorSequence.new({
-            ColorSequenceKeypoint.new(0, Color3.fromRGB(22, 24, 27)),
-            ColorSequenceKeypoint.new(1, Color3.fromRGB(14, 15, 17)),
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(38, 42, 47)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(28, 31, 35)),
         }),
         Rotation = 90,
         Parent = Label,
@@ -1588,8 +1593,8 @@ function Library:AddDraggableButton(Text: string, Func, ExcludeScaling: boolean?
     })
     New("UIGradient", {
         Color = ColorSequence.new({
-            ColorSequenceKeypoint.new(0, Color3.fromRGB(22, 24, 27)),
-            ColorSequenceKeypoint.new(1, Color3.fromRGB(14, 15, 17)),
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(38, 42, 47)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(28, 31, 35)),
         }),
         Rotation = 90,
         Parent = Button,
@@ -1644,8 +1649,8 @@ function Library:AddDraggableMenu(Name: string)
     })
     New("UIGradient", {
         Color = ColorSequence.new({
-            ColorSequenceKeypoint.new(0, Color3.fromRGB(22, 24, 27)),
-            ColorSequenceKeypoint.new(1, Color3.fromRGB(14, 15, 17)),
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(38, 42, 47)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(28, 31, 35)),
         }),
         Rotation = 90,
         Parent = Holder,
@@ -1762,8 +1767,8 @@ function Library:AddContextMenu(
     })
     New("UIGradient", {
         Color = ColorSequence.new({
-            ColorSequenceKeypoint.new(0, Color3.fromRGB(22, 24, 27)),
-            ColorSequenceKeypoint.new(1, Color3.fromRGB(14, 15, 17)),
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(38, 42, 47)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(28, 31, 35)),
         }),
         Rotation = 90,
         Parent = Menu,
@@ -1910,8 +1915,8 @@ New("UIStroke", {
 })
 New("UIGradient", {
     Color = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(22, 24, 27)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(14, 15, 17)),
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(38, 42, 47)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(28, 31, 35)),
     }),
     Rotation = 90,
     Parent = TooltipLabel,
@@ -2062,7 +2067,7 @@ function Library:SetIconModule(module: IconModule)
     FetchIcons = true
     Icons = module
 
-    -- Top ten fixes 🚀
+    -- Top ten fixes ðŸš€
     CheckIcon = Library:GetIcon("check")
     ArrowIcon = Library:GetIcon("chevron-up")
     ResizeIcon = Library:GetIcon("move-diagonal-2")
@@ -6029,8 +6034,8 @@ function Library:Notify(...)
     })
     New("UIGradient", {
         Color = ColorSequence.new({
-            ColorSequenceKeypoint.new(0, Color3.fromRGB(22, 24, 27)),
-            ColorSequenceKeypoint.new(1, Color3.fromRGB(14, 15, 17)),
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(38, 42, 47)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(28, 31, 35)),
         }),
         Rotation = 90,
         Parent = Holder,
@@ -6362,10 +6367,10 @@ function Library:CreateWindow(WindowInfo)
         Library.KeybindFrame.Visible = false
 
         --// Verdant window palette
-        local VER_BG  = Color3.fromRGB(12, 13, 15)
-        local VER_TOP = Color3.fromRGB(16, 18, 20)
+        local VER_BG  = Color3.fromRGB(23, 25, 28)
+        local VER_TOP = Color3.fromRGB(30, 33, 38)
         local VER_ACC = Color3.fromRGB(34, 197, 94)
-        local VER_OUT = Color3.fromRGB(42, 46, 51)
+        local VER_OUT = Color3.fromRGB(58, 63, 69)
 
         MainFrame = New("TextButton", {
             BackgroundColor3 = VER_BG,
@@ -6381,29 +6386,46 @@ function Library:CreateWindow(WindowInfo)
             Parent = MainFrame,
         })
         table.insert(Library.Scales, New("UIScale", { Parent = MainFrame }))
-        -- Layered green outer glow (stepped falloff bands)
-        for Band = 1, 12 do
-            local Margin = Band * 2
-            local Layer = New("Frame", {
-                AnchorPoint = Vector2.new(0.5, 0.5),
-                BackgroundColor3 = Color3.new(0, 0, 0),
-                BackgroundTransparency = 1,
-                Position = UDim2.fromScale(0.5, 0.5),
-                Size = UDim2.new(1, Margin * 2, 1, Margin * 2),
-                Parent = MainFrame,
-            })
-            New("UICorner", {
-                CornerRadius = UDim.new(0, WindowInfo.CornerRadius + Margin),
-                Parent = Layer,
-            })
-            New("UIStroke", {
-                ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-                Color = VER_ACC,
-                Thickness = 2,
-                Transparency = 0.62 + (Band - 1) * 0.026,
-                Parent = Layer,
-            })
+        -- Layered green outer glow (stepped falloff bands, configurable)
+        local GlowLayers = {}
+        local function BuildGlow()
+            for _, Layer in GlowLayers do
+                Layer:Destroy()
+            end
+            GlowLayers = {}
+
+            if not WindowInfo.Glow then
+                return
+            end
+
+            local Bands = math.clamp(math.floor((WindowInfo.GlowSize or 10) / 2), 2, 24)
+            local Opacity = math.clamp(WindowInfo.GlowOpacity or 1, 0, 1)
+
+            for Band = 1, Bands do
+                local Margin = Band * 2
+                local Layer = New("Frame", {
+                    AnchorPoint = Vector2.new(0.5, 0.5),
+                    BackgroundColor3 = Color3.new(0, 0, 0),
+                    BackgroundTransparency = 1,
+                    Position = UDim2.fromScale(0.5, 0.5),
+                    Size = UDim2.new(1, Margin * 2, 1, Margin * 2),
+                    Parent = MainFrame,
+                })
+                New("UICorner", {
+                    CornerRadius = UDim.new(0, WindowInfo.CornerRadius + Margin),
+                    Parent = Layer,
+                })
+                New("UIStroke", {
+                    ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
+                    Color = VER_ACC,
+                    Thickness = 2,
+                    Transparency = 1 - math.max(0.5 * (1 - (Band - 1) / Bands) * Opacity, 0.04),
+                    Parent = Layer,
+                })
+                table.insert(GlowLayers, Layer)
+            end
         end
+        BuildGlow()
         -- Crisp hairline border
         New("UIStroke", {
             ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
@@ -6567,7 +6589,7 @@ function Library:CreateWindow(WindowInfo)
 
         -- Search box
         SearchBox = New("TextBox", {
-            BackgroundColor3 = Color3.fromRGB(20, 22, 25),
+            BackgroundColor3 = Color3.fromRGB(36, 40, 45),
             PlaceholderText = "Search...",
             Size = WindowInfo.SearchbarSize,
             TextScaled = true,
@@ -6771,6 +6793,19 @@ function Library:CreateWindow(WindowInfo)
         end
     end
 
+    function Window:SetGlow(Enabled, Size, Opacity)
+        if typeof(Enabled) == "boolean" then
+            WindowInfo.Glow = Enabled
+        end
+        if typeof(Size) == "number" then
+            WindowInfo.GlowSize = math.clamp(Size, 4, 48)
+        end
+        if typeof(Opacity) == "number" then
+            WindowInfo.GlowOpacity = math.clamp(Opacity, 0, 1)
+        end
+        BuildGlow()
+    end
+
     function Window:ShowTabInfo(Name, Description)
         CurrentTabLabel.Text = Name
         CurrentTabDescription.Text = Description
@@ -6840,7 +6875,7 @@ function Library:CreateWindow(WindowInfo)
                 Parent = TabButton,
             })
 
-            -- Pill fill — solid green when active, hidden otherwise
+            -- Pill fill â€” solid green when active, hidden otherwise
             TabPill = New("Frame", {
                 AnchorPoint = Vector2.new(0.5, 0.5),
                 BackgroundColor3 = Library.Scheme.AccentColor,
@@ -7555,6 +7590,9 @@ function Library:CreateWindow(WindowInfo)
         function Tab:Hover(Hovering)
             if Library.ActiveTab == Tab then return end
             local T = TweenInfo.new(0.16, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out)
+            TweenService:Create(TabButton, T, {
+                BackgroundTransparency = Hovering and 0.85 or 1,
+            }):Play()
             TweenService:Create(TabLabel, T, {
                 TextTransparency = Hovering and 0.15 or 0.5,
             }):Play()
@@ -7576,7 +7614,10 @@ function Library:CreateWindow(WindowInfo)
 
             local T = TweenInfo.new(0.22, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out)
 
-            -- Solid green fill for the active tab
+            -- Solid green fill for the active tab (button itself turns green)
+            TweenService:Create(TabButton, T, {
+                BackgroundTransparency = 0,
+            }):Play()
             TweenService:Create(TabPill, T, {
                 BackgroundTransparency = 0,
             }):Play()
@@ -7604,6 +7645,7 @@ function Library:CreateWindow(WindowInfo)
         function Tab:Hide()
             local T = TweenInfo.new(0.18, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out)
 
+            TweenService:Create(TabButton, T, { BackgroundTransparency = 1 }):Play()
             TweenService:Create(TabPill, T, { BackgroundTransparency = 1 }):Play()
             TweenService:Create(TabGlow, T, { Transparency = 1 }):Play()
             TweenService:Create(TabLabel, T, {
@@ -7883,6 +7925,9 @@ function Library:CreateWindow(WindowInfo)
                 Library.ActiveTab:Hide()
             end
 
+            TweenService:Create(TabButton, Library.TweenInfo, {
+                BackgroundTransparency = 0,
+            }):Play()
             TweenService:Create(KeyTabPill, Library.TweenInfo, {
                 BackgroundTransparency = 0,
             }):Play()
@@ -7915,6 +7960,9 @@ function Library:CreateWindow(WindowInfo)
         end
 
         function Tab:Hide()
+            TweenService:Create(TabButton, Library.TweenInfo, {
+                BackgroundTransparency = 1,
+            }):Play()
             TweenService:Create(KeyTabPill, Library.TweenInfo, {
                 BackgroundTransparency = 1,
             }):Play()
@@ -8007,8 +8055,8 @@ function Library:CreateWindow(WindowInfo)
         })
         New("UIGradient", {
             Color = ColorSequence.new({
-                ColorSequenceKeypoint.new(0, Color3.fromRGB(22, 24, 27)),
-                ColorSequenceKeypoint.new(1, Color3.fromRGB(14, 15, 17)),
+                ColorSequenceKeypoint.new(0, Color3.fromRGB(38, 42, 47)),
+                ColorSequenceKeypoint.new(1, Color3.fromRGB(28, 31, 35)),
             }),
             Rotation = 90,
             Parent = DialogFrame,
