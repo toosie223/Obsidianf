@@ -311,7 +311,7 @@ local Templates = {
         Glow = true,
         GlowSize = 10,
         GlowOpacity = 1,
-        GlowColor = Color3.fromRGB(34, 197, 94),
+        GlowColor = nil,
 
         EnableSidebarResize = false,
         EnableCompacting = true,
@@ -959,6 +959,10 @@ function Library:UpdateColorsUsingRegistry()
                 Instance[Property] = SchemeValue or Index()
             end
         end
+    end
+
+    if Library._RebuildGlow then
+        Library._RebuildGlow()
     end
 end
 
@@ -2068,7 +2072,7 @@ function Library:SetIconModule(module: IconModule)
     FetchIcons = true
     Icons = module
 
-    -- Top ten fixes ðŸš€
+    -- Top ten fixes
     CheckIcon = Library:GetIcon("check")
     ArrowIcon = Library:GetIcon("chevron-up")
     ResizeIcon = Library:GetIcon("move-diagonal-2")
@@ -3479,7 +3483,7 @@ do
                 Size = UDim2.fromScale(1, 1),
                 Text = Button.Text,
                 TextSize = 14,
-                TextTransparency = 0.4,
+                TextTransparency = 0.12,
                 Visible = Button.Visible,
                 Parent = Holder,
             })
@@ -3493,6 +3497,11 @@ do
                 Transparency = Button.Disabled and 0.5 or 0,
                 Parent = Base,
             })
+
+            Library.Registry[Base] = {
+                BackgroundColor3 = Button.Disabled and "BackgroundColor" or "MainColor",
+            }
+            Library.Registry[Stroke] = { Color = "OutlineColor" }
 
             return Base, Stroke
         end
@@ -3519,7 +3528,7 @@ do
                 end
 
                 Button.Tween = TweenService:Create(Button.Base, Library.TweenInfo, {
-                    TextTransparency = 0.4,
+                    TextTransparency = 0.12,
                     BackgroundColor3 = Button.Disabled and Library.Scheme.BackgroundColor or Library.Scheme.MainColor,
                 })
                 Button.Tween:Play()
@@ -3596,7 +3605,7 @@ do
 
                 SubButton.Base.BackgroundColor3 = SubButton.Disabled and Library.Scheme.BackgroundColor
                     or Library.Scheme.MainColor
-                SubButton.Base.TextTransparency = SubButton.Disabled and 0.8 or 0.4
+                SubButton.Base.TextTransparency = SubButton.Disabled and 0.8 or 0.12
                 SubButton.Stroke.Transparency = SubButton.Disabled and 0.5 or 0
 
                 Library.Registry[SubButton.Base].BackgroundColor3 = SubButton.Disabled and "BackgroundColor"
@@ -3657,7 +3666,7 @@ do
 
             Button.Base.BackgroundColor3 = Button.Disabled and Library.Scheme.BackgroundColor
                 or Library.Scheme.MainColor
-            Button.Base.TextTransparency = Button.Disabled and 0.8 or 0.4
+            Button.Base.TextTransparency = Button.Disabled and 0.8 or 0.12
             Button.Stroke.Transparency = Button.Disabled and 0.5 or 0
 
             Library.Registry[Button.Base].BackgroundColor3 = Button.Disabled and "BackgroundColor" or "MainColor"
@@ -6401,6 +6410,7 @@ function Library:CreateWindow(WindowInfo)
 
             local Bands = math.clamp(math.floor((WindowInfo.GlowSize or 10) / 2), 2, 24)
             local Opacity = math.clamp(WindowInfo.GlowOpacity or 1, 0, 1)
+            local Color = WindowInfo.GlowColor or Library.Scheme.AccentColor
 
             for Band = 1, Bands do
                 local Margin = Band * 2
@@ -6418,7 +6428,7 @@ function Library:CreateWindow(WindowInfo)
                 })
                 New("UIStroke", {
                     ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-                    Color = WindowInfo.GlowColor,
+                    Color = Color,
                     Thickness = 2,
                     Transparency = 1 - math.max(0.5 * (1 - (Band - 1) / Bands) * Opacity, 0.04),
                     Parent = Layer,
@@ -6427,13 +6437,16 @@ function Library:CreateWindow(WindowInfo)
             end
         end
         BuildGlow()
+        -- Rebuild the glow whenever the theme is recoloured so it matches the accent
+        Library._RebuildGlow = BuildGlow
         -- Crisp hairline border
-        New("UIStroke", {
+        local WindowHairline = New("UIStroke", {
             ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
             Color = VER_OUT,
             Thickness = 1,
             Parent = MainFrame,
         })
+        Library:AddToRegistry(WindowHairline, { Color = "OutlineColor" })
 
         if WindowInfo.BackgroundImage then
             BackgroundImage = New("ImageLabel", {
@@ -6878,7 +6891,7 @@ function Library:CreateWindow(WindowInfo)
                 Parent = TabButton,
             })
 
-            -- Pill fill â€” solid green when active, hidden otherwise
+            -- Pill fill - solid green when active, hidden otherwise
             TabPill = New("Frame", {
                 AnchorPoint = Vector2.new(0.5, 0.5),
                 BackgroundColor3 = Library.Scheme.AccentColor,
@@ -6893,6 +6906,8 @@ function Library:CreateWindow(WindowInfo)
                 Parent = TabPill,
             })
             Library:AddToRegistry(TabPill, { BackgroundColor3 = "AccentColor" })
+            Library:AddToRegistry(TabButton, { BackgroundColor3 = "AccentColor" })
+            Library:AddToRegistry(TabGlow, { Color = "AccentColor" })
 
             local ButtonPadding = New("UIPadding", {
                 PaddingBottom = UDim.new(0, 7),
@@ -7748,6 +7763,8 @@ function Library:CreateWindow(WindowInfo)
                 Parent = KeyTabPill,
             })
             Library:AddToRegistry(KeyTabPill, { BackgroundColor3 = "AccentColor" })
+            Library:AddToRegistry(TabButton, { BackgroundColor3 = "AccentColor" })
+            Library:AddToRegistry(KeyTabGlow, { Color = "AccentColor" })
             local ButtonPadding = New("UIPadding", {
                 PaddingBottom = UDim.new(0, 7),
                 PaddingLeft = UDim.new(0, 14),
