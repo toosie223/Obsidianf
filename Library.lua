@@ -6393,6 +6393,16 @@ function Library:CreateWindow(WindowInfo)
         })
         table.insert(Library.Scales, New("UIScale", { Parent = MainFrame }))
         -- Layered green outer glow
+        local GlowFrame = New("Frame", {
+            BackgroundColor3 = Color3.new(0, 0, 0),
+            BackgroundTransparency = 1,
+            Size = UDim2.fromScale(1, 1),
+            Parent = MainFrame,
+        })
+        New("UICorner", {
+            CornerRadius = UDim.new(0, WindowInfo.CornerRadius),
+            Parent = GlowFrame,
+        })
         for _, Layer in {
             { 26, 0.95 },
             { 15, 0.9 },
@@ -6400,11 +6410,11 @@ function Library:CreateWindow(WindowInfo)
             { 2, 0.5 },
         } do
             New("UIStroke", {
-                ApplyStrokeMode = Enum.ApplyStrokeMode.Outer,
+                ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
                 Color = VER_ACC,
                 Thickness = Layer[1],
                 Transparency = Layer[2],
-                Parent = MainFrame,
+                Parent = GlowFrame,
             })
         end
         -- Crisp hairline border
