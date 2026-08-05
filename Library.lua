@@ -311,6 +311,7 @@ local Templates = {
         Glow = true,
         GlowSize = 10,
         GlowOpacity = 1,
+        GlowColor = Color3.fromRGB(34, 197, 94),
 
         EnableSidebarResize = false,
         EnableCompacting = true,
@@ -6417,7 +6418,7 @@ function Library:CreateWindow(WindowInfo)
                 })
                 New("UIStroke", {
                     ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-                    Color = VER_ACC,
+                    Color = WindowInfo.GlowColor,
                     Thickness = 2,
                     Transparency = 1 - math.max(0.5 * (1 - (Band - 1) / Bands) * Opacity, 0.04),
                     Parent = Layer,
@@ -6737,7 +6738,6 @@ function Library:CreateWindow(WindowInfo)
             Size = UDim2.new(1, 0, 1, -122),
             Parent = MainFrame,
         })
-        Library:AddToRegistry(Container, { BackgroundColor3 = "MainColor" })
         New("UIPadding", {
             PaddingBottom = UDim.new(0, 0), PaddingLeft = UDim.new(0, 6),
             PaddingRight = UDim.new(0, 6), PaddingTop = UDim.new(0, 0),
@@ -6793,7 +6793,7 @@ function Library:CreateWindow(WindowInfo)
         end
     end
 
-    function Window:SetGlow(Enabled, Size, Opacity)
+    function Window:SetGlow(Enabled, Size, Opacity, Color)
         if typeof(Enabled) == "boolean" then
             WindowInfo.Glow = Enabled
         end
@@ -6802,6 +6802,9 @@ function Library:CreateWindow(WindowInfo)
         end
         if typeof(Opacity) == "number" then
             WindowInfo.GlowOpacity = math.clamp(Opacity, 0, 1)
+        end
+        if typeof(Color) == "Color3" then
+            WindowInfo.GlowColor = Color
         end
         BuildGlow()
     end
